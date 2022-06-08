@@ -1,0 +1,17 @@
+# ninja log v5
+4	199	6738813739289470	CMakeFiles/Os_design.dir/test.cpp.obj	ae693d0ac791480c
+0	236	6738952777508092	CMakeFiles/Os_design.dir/PS.cpp.obj	5f2ca9705e9d0c26
+4	571	6738730378202236	CMakeFiles/Os_design.dir/main.cpp.obj	834eaf391698e86c
+655	1296	6746531673964971	Os_design.exe	e11ce5fef856357
+1	739	6747348876276611	build.ninja	8c26f2124e802649
+1	716	6738862551138229	CMakeFiles/Os_design.dir/NPS.cpp.obj	f791f6433fbd32da
+5	1192	6746515678642320	CMakeFiles/Os_design.dir/SJF_FCFS.cpp.obj	95b5ab01bb0ef563
+0	536	6739491748184239	CMakeFiles/Os_design.dir/test2.cpp.obj	f10996af181d8f86
+7	4017	6739298897434486	CMakeFiles/Os_design.dir/final.cpp.obj	e3c7094b10663fb1
+0	647	6746531667552126	CMakeFiles/Os_design.dir/OS_pcb.cpp.obj	904a2699fe47943d
+6	687	6754553654745457	CMakeFiles/Os_design.dir/OS_pcb.cpp.obj	904a2699fe47943d
+688	1437	6754553662147753	Os_design.exe	e11ce5fef856357
+7	3008	6763511317144796	CMakeFiles/Os_design.dir/OS_pcb.cpp.obj	904a2699fe47943d
+3009	4554	6763511332517926	Os_design.exe	e11ce5fef856357
+4	644	6763582079695515	CMakeFiles/Os_design.dir/OS_pcb.cpp.obj	904a2699fe47943d
+645	1294	6763582086123807	Os_design.exe	e11ce5fef856357
