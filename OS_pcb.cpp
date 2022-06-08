@@ -20,18 +20,19 @@ typedef struct PCB {
     int num;                        /*进程代号*/
     int comingTimes;                /*到达时间*/
     int serveTime;                  /*服务时间*/
-    int priority;                   /*优先级*/
+    int priority;                   /*优先级数  数值大优先级大*/
     int startedTimes = 0;           /*记录开始运行时刻*/
     int finishedTimes = 0;          /*记录结束运行时刻*/
     int turnoverTimes = 0;          /*周转时间*/
     int waitingTimes = 0;           /*等待时间*/
     float turnoverTimesWeight = 0;  /*带权周转时间*/
     bool flag = true;               /*可用标识*/
-    bool startFlag = false;         /*可用标识*/
+    bool startFlag = false;         /*首次调用 可用标识*/
 } PCBblock;
 
 /**
 * 函数声明
+* 宋保贤40% 赵成叶30% 王长彬30% 整体分工
 */
 void InitProcessCount();                             /*输入进程个数*/
 void InitPCBData(PCBblock pcBblockList[]);           /*初始化结构体数组*/
@@ -43,9 +44,14 @@ void FCFS(PCBblock pcBblockList[]);                 /*先来先服务*/
 void PS(PCBblock pcBblockList[]);                   /*抢占式*/
 void NPS(PCBblock pcBblockList[]);                  /*非抢占式*/
 void PrintSchedule(PCBblock pcBblockList[]);        /*打印调度信息*/
+void PrintSchedule_Test(PCBblock pcBblockList[]);   /*打印调度信息*/
 void PrintSchedule_Flag(PCBblock pcBblockList[]);   /*打印调度信息*/
-void PrintSchedule_Pri(PCBblock pcBblockList[]);   /*打印调度信息*/
+void PrintSchedule_1(PCBblock pcBblockList[]);      /*打印调度信息*/
+void PrintSchedule_Pri(PCBblock pcBblockList[]);    /*打印调度信息*/
 void begin(int choice, PCBblock pcBblockList[]);    /*开始函数*/
+bool LessSort_comingTime(PCBblock a, PCBblock b);   /*先来先服务排序规则 按照到来时间 升序排序规则 */
+bool LessSort_Num(PCBblock a, PCBblock b);          /*按照进程标识号 升序排序规则*/
+bool LessSort_StartTime(PCBblock a, PCBblock b);    /*按照开始时间 升序排序规则*/
 
 /**
  * 主方法
@@ -55,6 +61,9 @@ void begin(int choice, PCBblock pcBblockList[]);    /*开始函数*/
 int main() {
     /*  1. 初始化进程数量      */
     InitProcessCount();
+    while (processCounts <= 0) {
+        InitProcessCount();
+    }
     /*  2. 定义进程结构体数组    */
     PCBblock pcBblockList[processCounts];
     /*  3. 初始化进程结构体数组   */
@@ -76,9 +85,10 @@ int main() {
 
 /**
  * 初始化进程数量
+ * CodeBy： 宋保贤
  */
 void InitProcessCount() {
-    cout << "==>请输入进程个数:";
+    cout << "==>请输入进程个数(进程数量>0):";
     cin >> processCounts;
 }
 
@@ -88,24 +98,24 @@ void InitProcessCount() {
  * @param pcBblockList
  */
 void InitPCBData(PCBblock pcBblockList[]) {
-    cout << "*********************************数据初始化开始*********************************" << endl;
+    cout << "***********************************数据初始化开始***********************************" << endl;
     for (int i = 0; i < processCounts; ++i) {
         pcBblockList[i].num = i + 1;
-        cout << "==>请输入进程 [" << i + 1 << "] 的到达时间： ";
+        cout << "==>请输入进程 " << i + 1 << " 的到达时间： ";
         cin >> pcBblockList[i].comingTimes;
-        cout << "==>请输入进程 [" << i + 1 << "] 的服务时间： ";
+        cout << "==>请输入进程 " << i + 1 << " 的服务时间： ";
         cin >> pcBblockList[i].serveTime;
-        cout << "==>请输入进程 [" << i + 1 << "] 的优先级： ";
+        cout << "==>请输入进程 " << i + 1 << " 的优先级： ";
         cin >> pcBblockList[i].priority;
         cout << endl;
     }
-    cout << "*********************************数据初始化结束*********************************" << endl;
+    cout << "***********************************数据初始化结束***********************************" << endl;
 }
 
 /**
  * 开始函数
- * @param choice
  * CodeBy： 赵成叶
+ * @param choice
  * @param pcBblockList
  */
 void begin(int choice, PCBblock pcBblockList[]) {
@@ -135,7 +145,7 @@ void begin(int choice, PCBblock pcBblockList[]) {
  * @param pcBblockList
  */
 void PrintInformation(PCBblock pcBblockList[]) {
-    cout << "==>被进程输入的进程数量: [ " << processCounts << " ] " << endl;
+    cout << "==>被进程输入的进程数量:  " << processCounts << "  " << endl;
     cout << "==>进程到来的时间展示: ";
     for (int i = 0; i < processCounts; i++) {
         cout << pcBblockList[i].comingTimes << " ";
@@ -158,7 +168,7 @@ void PrintInformation(PCBblock pcBblockList[]) {
  * CodeBy： 赵成叶
  */
 void ChooseMethod() {
-    cout << "请选择一种调度方式[ 1-(先来先服务FCFS),  2-(短进程优先SJF),  3-优先级(非抢占),  4-优先级(抢占式)  9999-退出程序]: ";
+    cout << "请选择一种调度方式 1-(先来先服务FCFS),  2-(短进程优先SJF),  3-优先级(非抢占),  4-优先级(抢占式)  9999-退出程序: ";
     cin >> methodChoosen;
     cout << endl;
 }
@@ -217,6 +227,7 @@ void FCFS(PCBblock pcBblockList[]) {
         if (pcBblockList_copy[i].comingTimes > current) {
             current = pcBblockList_copy[i].comingTimes;
         }
+        pcBblockList_copy[i].flag = false;
         /*  开始时间 = 当前时间  */
         pcBblockList_copy[i].startedTimes = current;
         /*  完成时间 = 开始时间 + 服务时间   */
@@ -228,12 +239,17 @@ void FCFS(PCBblock pcBblockList[]) {
         /*  周转时间 = 服务时间 + 等待时间      */
         pcBblockList_copy[i].turnoverTimes = pcBblockList_copy[i].serveTime + pcBblockList_copy[i].waitingTimes;
         /*  带权周转时间 = 周转时间 / 服务时间     */
-        pcBblockList_copy[i].turnoverTimesWeight =
-                (float) pcBblockList_copy[i].turnoverTimes / (float) pcBblockList_copy[i].serveTime;
+        pcBblockList_copy[i].turnoverTimesWeight = (float) pcBblockList_copy[i].turnoverTimes / (float) pcBblockList_copy[i].serveTime;
+
+
+        //PrintSchedule_Test(pcBblockList_copy); /*打印调度测试过程*/
+
+
     }
     /*  打印进程相关信息    */
     sort(pcBblockList_copy, pcBblockList_copy + processCounts, LessSort_StartTime);
     PrintSchedule(pcBblockList_copy);
+    cout<<endl;cout<<endl;
 }
 
 /**
@@ -273,24 +289,25 @@ void SJF(PCBblock pcBblockList[]) {
         /*  开始时间 = 当前时间  */
         pcBblockList_copy[index].startedTimes = current;
         /*  完成时间 = 开始时间 + 服务时间   */
-        pcBblockList_copy[index].finishedTimes =
-                pcBblockList_copy[index].startedTimes + pcBblockList_copy[index].serveTime;
+        pcBblockList_copy[index].finishedTimes = pcBblockList_copy[index].startedTimes + pcBblockList_copy[index].serveTime;
         /*  等待时间 = 开始时间 - 到来时间     */
-        pcBblockList_copy[index].waitingTimes =
-                pcBblockList_copy[index].startedTimes - pcBblockList_copy[index].comingTimes;
+        pcBblockList_copy[index].waitingTimes = pcBblockList_copy[index].startedTimes - pcBblockList_copy[index].comingTimes;
         /*  当前时间 = 完成时间     */
         current = pcBblockList_copy[index].finishedTimes;
         /*  周转时间 = 服务时间 + 等待时间      */
-        pcBblockList_copy[index].turnoverTimes =
-                pcBblockList_copy[index].serveTime + pcBblockList_copy[index].waitingTimes;
+        pcBblockList_copy[index].turnoverTimes =  pcBblockList_copy[index].serveTime + pcBblockList_copy[index].waitingTimes;
         /*  带权周转时间 = 周转时间 / 服务时间     */
-        pcBblockList_copy[index].turnoverTimesWeight =
-                (float) pcBblockList_copy[index].turnoverTimes / (float) pcBblockList_copy[index].serveTime;
+        pcBblockList_copy[index].turnoverTimesWeight =  (float) pcBblockList_copy[index].turnoverTimes / (float) pcBblockList_copy[index].serveTime;
+
+
+        //PrintSchedule_Test(pcBblockList_copy); /*打印调度测试过程*/
+
+
     }
     /*  打印进程相关信息    */
     sort(pcBblockList_copy, pcBblockList_copy + processCounts, LessSort_StartTime);
     PrintSchedule(pcBblockList_copy);
-
+    cout<<endl;cout<<endl;
 }
 
 /**
@@ -309,7 +326,7 @@ void PcbCopy(PCBblock pcBblockList1[], PCBblock pcBblockList2[]) {
 }
 
 /**
- * 优先级调度算法(非抢占式)
+ * 优先级调度算法(非抢占式)  优先级数大 的 优先级高
  * CodeBy： 宋保贤
  * @param pcBblockList
  */
@@ -341,22 +358,24 @@ void NPS(PCBblock pcBblockList[]) {
         /*  开始时间 = 当前时间  */
         pcBblockList_copy[index].startedTimes = current;
         /*  完成时间 = 开始时间 + 服务时间   */
-        pcBblockList_copy[index].finishedTimes =
-                pcBblockList_copy[index].startedTimes + pcBblockList_copy[index].serveTime;
+        pcBblockList_copy[index].finishedTimes = pcBblockList_copy[index].startedTimes + pcBblockList_copy[index].serveTime;
         /*  等待时间 = 开始时间 - 到来时间     */
-        pcBblockList_copy[index].waitingTimes =
-                pcBblockList_copy[index].startedTimes - pcBblockList_copy[index].comingTimes;
+        pcBblockList_copy[index].waitingTimes = pcBblockList_copy[index].startedTimes - pcBblockList_copy[index].comingTimes;
         /*  当前时间 = 完成时间     */
         current = pcBblockList_copy[index].finishedTimes;
         /*  周转时间 = 服务时间 + 等待时间      */
-        pcBblockList_copy[index].turnoverTimes =
-                pcBblockList_copy[index].serveTime + pcBblockList_copy[index].waitingTimes;
+        pcBblockList_copy[index].turnoverTimes = pcBblockList_copy[index].serveTime + pcBblockList_copy[index].waitingTimes;
         /*  带权周转时间 = 周转时间 / 服务时间     */
-        pcBblockList_copy[index].turnoverTimesWeight =
-                (float) pcBblockList_copy[index].turnoverTimes / (float) pcBblockList_copy[index].serveTime;
+        pcBblockList_copy[index].turnoverTimesWeight = (float) pcBblockList_copy[index].turnoverTimes / (float) pcBblockList_copy[index].serveTime;
+
+
+        //PrintSchedule_Test(pcBblockList_copy); /*打印调度测试过程*/
+
+
     }
     sort(pcBblockList_copy, pcBblockList_copy + processCounts, LessSort_StartTime);
     PrintSchedule_Pri(pcBblockList_copy);
+    cout<<endl;cout<<endl;
 }
 
 
@@ -368,27 +387,27 @@ void NPS(PCBblock pcBblockList[]) {
 void PS(PCBblock pcBblockList[]) {
      /*  定义一个进程结构体数组作为副本     */
      PCBblock pcBblockList_copy[processCounts], pcBblockList1[processCounts];
-     /*  调用复制函数  */
+     /*  调用复制函数  复制两份 因为其中的一份服务时间会减小到0 对数据进行了修改 */
      PcbCopy(pcBblockList, pcBblockList_copy);
      PcbCopy(pcBblockList, pcBblockList1);
      /*  调用排序函数  */
      sort(pcBblockList_copy, pcBblockList_copy + processCounts, LessSort_comingTime);
      sort(pcBblockList1, pcBblockList1 + processCounts, LessSort_comingTime);
      /*  定义总时间 得出循环次数 */
-
      int sumTime = 0;
      int serveTime=0;
+     /* 将所有的进程的服务时间求和 */
      for (int i = 0; i < processCounts; ++i) {
          serveTime+=pcBblockList_copy[i].serveTime;
      }
-
+     /* 再加上最后一个进程到来时间 得到最大循环次数 */
      sumTime = serveTime+pcBblockList_copy[processCounts-1].comingTimes;
-
      /*  设置最早来的进程的到来时间为当前时间  */
      int current = pcBblockList1[0].comingTimes;
      /*  index代表当前调度进程的索引  local代表上一个调度进程的索引*/
      int index = 0, local = 0;
      /* 遍历时间循环  */
+     cout << "***********************************进程调度信息打印显示***********************************" << endl;
      for (; current <=sumTime; ++current) {
          int priNum = 0;
          for (int i = 0; i < processCounts; ++i) {
@@ -413,40 +432,41 @@ void PS(PCBblock pcBblockList[]) {
          /*  判断当前时间运行进程是否等于之前运行的进程   */
          if (local != index) {
              if (local != processCounts - 1) {
-                 cout << "进程[" << pcBblockList_copy[local].num << "]->";
+                 cout << "进程" << pcBblockList_copy[local].num << "->";
              }
              /*  把当前的进程的索引给local  local记录上一个调度的进程索引  */
              local = index;//代表打印过
          }
-         /*  设置结束时间  */
+         /*  设置结束时间  进程未被完全服务完毕  */
          if(pcBblockList1[index].flag){
-
+             /*不断修改它的完成时间，服务时间*/
              pcBblockList_copy[index].finishedTimes = current + 1;
-
              pcBblockList1[index].finishedTimes = current + 1;
              pcBblockList1[index].serveTime -= 1;
              /*  判断当前进程是否被服务完成 */
              if (pcBblockList1[index].serveTime == 0) {
                  pcBblockList1[index].flag = false;
              }
+
+
+             //PrintSchedule_Test(pcBblockList1);/*测试打印*/
+
+
          }
 
      }
-     cout << "进程[" << pcBblockList_copy[index].num << "]" << endl;
+     cout << "进程" << pcBblockList_copy[index].num << "" << endl;
      for (int index = 0; index < processCounts; ++index) {
          /*  等待时间 = 结束时间 - 到来时间 - 服务时间   */
-         pcBblockList_copy[index].waitingTimes =
-                 pcBblockList_copy[index].finishedTimes - pcBblockList_copy[index].comingTimes - pcBblockList_copy[index].serveTime;
+         pcBblockList_copy[index].waitingTimes = pcBblockList_copy[index].finishedTimes - pcBblockList_copy[index].comingTimes - pcBblockList_copy[index].serveTime;
          /*  周转时间 = 服务时间 + 等待时间 */
-         pcBblockList_copy[index].turnoverTimes =
-                 pcBblockList_copy[index].serveTime + pcBblockList_copy[index].waitingTimes;
+         pcBblockList_copy[index].turnoverTimes = pcBblockList_copy[index].serveTime + pcBblockList_copy[index].waitingTimes;
          /*  带权周转时间 = 周转时间 / 服务时间 */
-         pcBblockList_copy[index].turnoverTimesWeight =
-                 (float) pcBblockList_copy[index].turnoverTimes / (float) pcBblockList_copy[index].serveTime;
-
+         pcBblockList_copy[index].turnoverTimesWeight = (float) pcBblockList_copy[index].turnoverTimes / (float) pcBblockList_copy[index].serveTime;
      }
      sort(pcBblockList_copy, pcBblockList_copy + processCounts, LessSort_Num);
-     PrintSchedule_Flag(pcBblockList_copy);
+     PrintSchedule_1(pcBblockList_copy);
+     cout<<endl;cout<<endl;
 }
 
 /**
@@ -455,10 +475,10 @@ void PS(PCBblock pcBblockList[]) {
  * @param pcBblockList
  */
 void PrintSchedule_Flag(PCBblock pcBblockList[]) {
-    cout << "*********************************进程调度信息打印开始*********************************" << endl;
-    cout << "进程(ID)    到达时间    服务时间        优先级    等待时间    开始时间    完成时间    周转时间    加权周转时间    flag" << endl;
+    cout << "***********************************进程调度信息打印显示***********************************" << endl;
+    cout << "进程(ID)    到达时间    服务时间        优先级    等待时间    开始时间    完成时间    周转时间    带权周转时间    flag" << endl;
     for (int i = 0; i < processCounts; i++) {
-        printf("%5d    %6d    %7d    %7d    %7d    %7d    %7d    %7d    %10f      %d\n", pcBblockList[i].num,
+        printf("%5d    %6d    %7d    %7d    %7d    %7d    %7d    %7d    %.2f      %d\n", pcBblockList[i].num,
                pcBblockList[i].comingTimes, pcBblockList[i].serveTime, pcBblockList[i].priority,
                pcBblockList[i].waitingTimes, pcBblockList[i].startedTimes, pcBblockList[i].finishedTimes,
                pcBblockList[i].turnoverTimes, pcBblockList[i].turnoverTimesWeight, pcBblockList[i].flag);
@@ -473,22 +493,19 @@ void PrintSchedule_Flag(PCBblock pcBblockList[]) {
     }
     average_turnover_time = sum_turnover_time / processCounts;
     average_turnover_time_weight = sum_turnover_time_weight / processCounts;
-    cout << "==>平均周转时间为：[" << average_turnover_time << "] " << endl;
-    cout << "==>带权平均周转时间为：[" << average_turnover_time_weight << "] " << endl;
-    cout << "*********************************进程调度信息打印结束*********************************" << endl;
+    cout << "==>平均周转时间：" << average_turnover_time << " " << endl;
+    cout << "==>平均带权周转时间：" << average_turnover_time_weight << " " << endl;
+    cout << "***********************************进程调度信息打印结束***********************************" << endl;
 }
 
-
 /**
- * 打印调度信息(含有优先级)
- * CodeBy： 王长彬
+ * 打印调度信息
  * @param pcBblockList
  */
-void PrintSchedule_Pri(PCBblock pcBblockList[]) {
-    cout << "*********************************进程调度信息打印开始*********************************" << endl;
-    cout << "进程(ID)    到达时间    服务时间     优先级     等待时间     开始时间    完成时间    周转时间    加权周转时间" << endl;
+void PrintSchedule_1(PCBblock pcBblockList[]) {
+    cout << "进程(ID)    到达时间    服务时间        优先级    等待时间    开始时间    完成时间    周转时间    带权周转时间" << endl;
     for (int i = 0; i < processCounts; i++) {
-        printf("%5d    %6d    %7d    %7d    %7d    %7d    %7d    %7d    %10f\n", pcBblockList[i].num,
+        printf("%5d    %6d    %7d    %7d    %7d    %7d    %7d    %7d         %.2f\n", pcBblockList[i].num,
                pcBblockList[i].comingTimes, pcBblockList[i].serveTime, pcBblockList[i].priority,
                pcBblockList[i].waitingTimes, pcBblockList[i].startedTimes, pcBblockList[i].finishedTimes,
                pcBblockList[i].turnoverTimes, pcBblockList[i].turnoverTimesWeight);
@@ -503,17 +520,65 @@ void PrintSchedule_Pri(PCBblock pcBblockList[]) {
     }
     average_turnover_time = sum_turnover_time / processCounts;
     average_turnover_time_weight = sum_turnover_time_weight / processCounts;
-    cout << "==>平均周转时间为：[" << average_turnover_time << "] " << endl;
-    cout << "==>带权平均周转时间为：[" << average_turnover_time_weight << "] " << endl;
+    cout << "==>平均周转时间：" << average_turnover_time << " " << endl;
+    cout << "==>平均带权周转时间：" << average_turnover_time_weight << " " << endl;
+    cout << "***********************************进程调度信息打印结束***********************************" << endl;
+}
+
+/**
+ * 打印调度信息(test用)  0调度了，1未调度
+ * CodeBy： 宋保贤
+ * @param pcBblockList
+ */
+void PrintSchedule_Test(PCBblock pcBblockList[]) {
+    cout << "---------------------------------进程调度过程测试打印显示---------------------------------" << endl;
+    cout << "进程(ID)    到达时间    服务时间        优先级    等待时间    开始时间    完成时间    flag(0: 完成 , 1: 未完成)" << endl;
+    for (int i = 0; i < processCounts; i++) {
+        printf("%5d    %6d    %7d    %7d    %7d    %7d    %7d          %d\n", pcBblockList[i].num,
+               pcBblockList[i].comingTimes, pcBblockList[i].serveTime, pcBblockList[i].priority,
+               pcBblockList[i].waitingTimes, pcBblockList[i].startedTimes, pcBblockList[i].finishedTimes,
+               pcBblockList[i].flag);
+    }
+    cout << "---------------------------------进程调度过程测试打印结束---------------------------------" << endl;
+}
+
+
+
+/**
+ * 打印调度信息(含有优先级)
+ * CodeBy： 王长彬
+ * @param pcBblockList
+ */
+void PrintSchedule_Pri(PCBblock pcBblockList[]) {
+    cout << "***********************************进程调度信息打印显示***********************************" << endl;
     cout << "==>调度过程: ";
     for (int i = 0; i < processCounts; ++i) {
         if (i != processCounts - 1) {
-            cout << "进程[" << pcBblockList[i].num << "]->";
+            cout << "进程" << pcBblockList[i].num << "->";
         } else {
-            cout << "进程[" << pcBblockList[i].num << "]" << endl;
+            cout << "进程" << pcBblockList[i].num << "" << endl;
         }
     }
-    cout << "*********************************进程调度信息打印结束*********************************" << endl;
+    cout << "进程(ID)    到达时间    服务时间     优先级     等待时间     开始时间    完成时间    周转时间    带权周转时间" << endl;
+    for (int i = 0; i < processCounts; i++) {
+        printf("%5d    %6d    %7d    %7d    %7d    %7d    %7d    %7d         %.2f\n", pcBblockList[i].num,
+               pcBblockList[i].comingTimes, pcBblockList[i].serveTime, pcBblockList[i].priority,
+               pcBblockList[i].waitingTimes, pcBblockList[i].startedTimes, pcBblockList[i].finishedTimes,
+               pcBblockList[i].turnoverTimes, pcBblockList[i].turnoverTimesWeight);
+    }
+    /*平均周转时间和总周转时间*/
+    float average_turnover_time, sum_turnover_time = 0.0;
+    /*平均带权周转时间和总带权周转时间*/
+    float average_turnover_time_weight, sum_turnover_time_weight = 0;
+    for (int i = 0; i < processCounts; i++) {
+        sum_turnover_time += pcBblockList[i].turnoverTimes;
+        sum_turnover_time_weight += pcBblockList[i].turnoverTimesWeight;
+    }
+    average_turnover_time = sum_turnover_time / processCounts;
+    average_turnover_time_weight = sum_turnover_time_weight / processCounts;
+    cout << "==>平均周转时间：" << average_turnover_time << " " << endl;
+    cout << "==>平均带权周转时间：" << average_turnover_time_weight << " " << endl;
+    cout << "***********************************进程调度信息打印结束***********************************" << endl;
 }
 
 /**
@@ -522,10 +587,18 @@ void PrintSchedule_Pri(PCBblock pcBblockList[]) {
  * @param pcBblockList
  */
 void PrintSchedule(PCBblock pcBblockList[]) {
-    cout << "*********************************进程调度信息打印开始*********************************" << endl;
-    cout << "进程(ID)    到达时间    服务时间    等待时间    开始时间    完成时间    周转时间    加权周转时间" << endl;
+    cout << "***********************************进程调度信息打印显示***********************************" << endl;
+    cout << "==>调度过程: ";
+    for (int i = 0; i < processCounts; ++i) {
+        if (i != processCounts - 1) {
+            cout << "进程" << pcBblockList[i].num << "->";
+        } else {
+            cout << "进程" << pcBblockList[i].num << "" << endl;
+        }
+    }
+    cout << "进程(ID)    到达时间    服务时间    等待时间    开始时间    完成时间    周转时间    带权周转时间" << endl;
     for (int i = 0; i < processCounts; i++) {
-        printf("%5d    %6d    %7d    %7d    %7d    %7d    %7d    %10f\n", pcBblockList[i].num,
+        printf("%5d    %6d    %7d    %7d    %7d    %7d    %7d      %.2f\n", pcBblockList[i].num,
                pcBblockList[i].comingTimes, pcBblockList[i].serveTime, pcBblockList[i].waitingTimes,
                pcBblockList[i].startedTimes, pcBblockList[i].finishedTimes, pcBblockList[i].turnoverTimes,
                pcBblockList[i].turnoverTimesWeight);
@@ -540,16 +613,8 @@ void PrintSchedule(PCBblock pcBblockList[]) {
     }
     average_turnover_time = sum_turnover_time / processCounts;
     average_turnover_time_weight = sum_turnover_time_weight / processCounts;
-    cout << "==>平均周转时间为：[" << average_turnover_time << "] " << endl;
-    cout << "==>带权平均周转时间为：[" << average_turnover_time_weight << "] " << endl;
-    cout << "==>调度过程: ";
-    for (int i = 0; i < processCounts; ++i) {
-        if (i != processCounts - 1) {
-            cout << "进程[" << pcBblockList[i].num << "]->";
-        } else {
-            cout << "进程[" << pcBblockList[i].num << "]" << endl;
-        }
-    }
-    cout << "*********************************进程调度信息打印结束*********************************" << endl;
+    cout << "==>平均周转时间：" << average_turnover_time << " " << endl;
+    cout << "==>平均带权周转时间：" << average_turnover_time_weight << " " << endl;
+    cout << "***********************************进程调度信息打印结束***********************************" << endl;
 }
 
