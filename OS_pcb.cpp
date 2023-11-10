@@ -5,148 +5,144 @@
 
 using namespace std;
 
-/*½ø³Ìµ÷¶ÈµÄÄ£ÄâÊµÏÖ*/
+/*è¿›ç¨‹è°ƒåº¦çš„æ¨¡æ‹Ÿå®ç°*/
 
 /**
- * ¶¨ÒåÈ«¾Ö²ÎÊı
+ * å®šä¹‰å…¨å±€å‚æ•°
  */
-int processCounts;           /*¶¨Òå½ø³ÌÊı*/
-int methodChoosen;          /*ËùÑ¡µ÷¶ÈËã·¨*/
+int processCounts;           /*å®šä¹‰è¿›ç¨‹æ•°*/
+int methodChoosen;          /*æ‰€é€‰è°ƒåº¦ç®—æ³•*/
 
 /**
- * ¶¨Òå½ø³Ì¿ØÖÆ¿éµÄÊı¾İ½á¹¹
+ * å®šä¹‰è¿›ç¨‹æ§åˆ¶å—çš„æ•°æ®ç»“æ„
  */
 typedef struct PCB {
-    int num;                        /*½ø³Ì´úºÅ*/
-    int comingTimes;                /*µ½´ïÊ±¼ä*/
-    int serveTime;                  /*·şÎñÊ±¼ä*/
-    int priority;                   /*ÓÅÏÈ¼¶*/
-    int startedTimes = 0;           /*¼ÇÂ¼¿ªÊ¼ÔËĞĞÊ±¿Ì*/
-    int finishedTimes = 0;          /*¼ÇÂ¼½áÊøÔËĞĞÊ±¿Ì*/
-    int turnoverTimes = 0;          /*ÖÜ×ªÊ±¼ä*/
-    int waitingTimes = 0;           /*µÈ´ıÊ±¼ä*/
-    float turnoverTimesWeight = 0;  /*´øÈ¨ÖÜ×ªÊ±¼ä*/
-    bool flag = true;               /*¿ÉÓÃ±êÊ¶*/
-    bool startFlag = false;         /*¿ÉÓÃ±êÊ¶*/
+    int num;                        /*è¿›ç¨‹ä»£å·*/
+    int comingTimes;                /*åˆ°è¾¾æ—¶é—´*/
+    int serveTime;                  /*æœåŠ¡æ—¶é—´*/
+    int priority;                   /*ä¼˜å…ˆçº§*/
+    int startedTimes = 0;           /*è®°å½•å¼€å§‹è¿è¡Œæ—¶åˆ»*/
+    int finishedTimes = 0;          /*è®°å½•ç»“æŸè¿è¡Œæ—¶åˆ»*/
+    int turnoverTimes = 0;          /*å‘¨è½¬æ—¶é—´*/
+    int waitingTimes = 0;           /*ç­‰å¾…æ—¶é—´*/
+    float turnoverTimesWeight = 0;  /*å¸¦æƒå‘¨è½¬æ—¶é—´*/
+    bool flag = true;               /*å¯ç”¨æ ‡è¯†*/
+    bool startFlag = false;         /*å¯ç”¨æ ‡è¯†*/
 } PCBblock;
 
 /**
-* º¯ÊıÉùÃ÷
+* å‡½æ•°å£°æ˜
 */
-void InitProcessCount();                             /*ÊäÈë½ø³Ì¸öÊı*/
-void InitPCBData(PCBblock pcBblockList[]);           /*³õÊ¼»¯½á¹¹ÌåÊı×é*/
-void PcbCopy(PCBblock pcBblockList1[], PCBblock pcBblockList2[]);  /*¸´ÖÆÒ»·İPcb½á¹¹Ìå¸±±¾*/
-void PrintInformation(PCBblock pcBblockList[]);     /*´òÓ¡ÊäÈëĞÅÏ¢*/
-void ChooseMethod();                                /*Ñ¡Ôñµ÷¶ÈËã·¨*/
-void SJF(PCBblock pcBblockList[]);                  /*¶Ì×÷ÒµÓÅÏÈ*/
-void FCFS(PCBblock pcBblockList[]);                 /*ÏÈÀ´ÏÈ·şÎñ*/
-void PS(PCBblock pcBblockList[]);                   /*ÇÀÕ¼Ê½*/
-void NPS(PCBblock pcBblockList[]);                  /*·ÇÇÀÕ¼Ê½*/
-void PrintSchedule(PCBblock pcBblockList[]);        /*´òÓ¡µ÷¶ÈĞÅÏ¢*/
-void PrintSchedule_Flag(PCBblock pcBblockList[]);   /*´òÓ¡µ÷¶ÈĞÅÏ¢*/
-void PrintSchedule_Pri(PCBblock pcBblockList[]);   /*´òÓ¡µ÷¶ÈĞÅÏ¢*/
-void begin(int choice, PCBblock pcBblockList[]);    /*¿ªÊ¼º¯Êı*/
+void InitProcessCount();                             /*è¾“å…¥è¿›ç¨‹ä¸ªæ•°*/
+void InitPCBData(PCBblock pcBblockList[]);           /*åˆå§‹åŒ–ç»“æ„ä½“æ•°ç»„*/
+void PcbCopy(PCBblock pcBblockList1[], PCBblock pcBblockList2[]);  /*å¤åˆ¶ä¸€ä»½Pcbç»“æ„ä½“å‰¯æœ¬*/
+void PrintInformation(PCBblock pcBblockList[]);     /*æ‰“å°è¾“å…¥ä¿¡æ¯*/
+void ChooseMethod();                                /*é€‰æ‹©è°ƒåº¦ç®—æ³•*/
+void SJF(PCBblock pcBblockList[]);                  /*çŸ­ä½œä¸šä¼˜å…ˆ*/
+void FCFS(PCBblock pcBblockList[]);                 /*å…ˆæ¥å…ˆæœåŠ¡*/
+void PS(PCBblock pcBblockList[]);                   /*æŠ¢å å¼*/
+void NPS(PCBblock pcBblockList[]);                  /*éæŠ¢å å¼*/
+void PrintSchedule(PCBblock pcBblockList[]);        /*æ‰“å°è°ƒåº¦ä¿¡æ¯*/
+void PrintSchedule_Flag(PCBblock pcBblockList[]);   /*æ‰“å°è°ƒåº¦ä¿¡æ¯*/
+void PrintSchedule_Pri(PCBblock pcBblockList[]);   /*æ‰“å°è°ƒåº¦ä¿¡æ¯*/
+void begin(int choice, PCBblock pcBblockList[]);    /*å¼€å§‹å‡½æ•°*/
 
 /**
- * Ö÷·½·¨
- * CodeBy£º ËÎ±£ÏÍ
+ * ä¸»æ–¹æ³•
  * @return 0
  */
 int main() {
-    /*  1. ³õÊ¼»¯½ø³ÌÊıÁ¿      */
+    /*  1. åˆå§‹åŒ–è¿›ç¨‹æ•°é‡      */
     InitProcessCount();
-    /*  2. ¶¨Òå½ø³Ì½á¹¹ÌåÊı×é    */
+    /*  2. å®šä¹‰è¿›ç¨‹ç»“æ„ä½“æ•°ç»„    */
     PCBblock pcBblockList[processCounts];
-    /*  3. ³õÊ¼»¯½ø³Ì½á¹¹ÌåÊı×é   */
+    /*  3. åˆå§‹åŒ–è¿›ç¨‹ç»“æ„ä½“æ•°ç»„   */
     InitPCBData(pcBblockList);
-    /*  4. ´òÓ¡Ò»´ÎÊäÈëµÄ½ø³Ì½á¹¹ÌåÊı×é*/
+    /*  4. æ‰“å°ä¸€æ¬¡è¾“å…¥çš„è¿›ç¨‹ç»“æ„ä½“æ•°ç»„*/
     PrintInformation(pcBblockList);
-    /*  5. Ñ¡Ôñµ÷ÓÃµÄËã·¨          */
+    /*  5. é€‰æ‹©è°ƒç”¨çš„ç®—æ³•          */
     ChooseMethod();
-    /*  6. ¿ªÊ¼ÔËĞĞÄ³¸öËã·¨         */
+    /*  6. å¼€å§‹è¿è¡ŒæŸä¸ªç®—æ³•         */
     while (methodChoosen != 9999) {
         begin(methodChoosen, pcBblockList);
         ChooseMethod();
     }
-    /*  Í£¶Ù   */
+    /*  åœé¡¿   */
     system("pause");
     return 0;
 }
 
 
 /**
- * ³õÊ¼»¯½ø³ÌÊıÁ¿
+ * åˆå§‹åŒ–è¿›ç¨‹æ•°é‡
  */
 void InitProcessCount() {
-    cout << "==>ÇëÊäÈë½ø³Ì¸öÊı:";
+    cout << "==>è¯·è¾“å…¥è¿›ç¨‹ä¸ªæ•°:";
     cin >> processCounts;
 }
 
 /**
- * ³õÊ¼»¯PCBÊı¾İ
- * CodeBy£º Íõ³¤±ò
+ * åˆå§‹åŒ–PCBæ•°æ®
  * @param pcBblockList
  */
 void InitPCBData(PCBblock pcBblockList[]) {
-    cout << "*********************************Êı¾İ³õÊ¼»¯¿ªÊ¼*********************************" << endl;
+    cout << "*********************************æ•°æ®åˆå§‹åŒ–å¼€å§‹*********************************" << endl;
     for (int i = 0; i < processCounts; ++i) {
         pcBblockList[i].num = i + 1;
-        cout << "==>ÇëÊäÈë½ø³Ì [" << i + 1 << "] µÄµ½´ïÊ±¼ä£º ";
+        cout << "==>è¯·è¾“å…¥è¿›ç¨‹ [" << i + 1 << "] çš„åˆ°è¾¾æ—¶é—´ï¼š ";
         cin >> pcBblockList[i].comingTimes;
-        cout << "==>ÇëÊäÈë½ø³Ì [" << i + 1 << "] µÄ·şÎñÊ±¼ä£º ";
+        cout << "==>è¯·è¾“å…¥è¿›ç¨‹ [" << i + 1 << "] çš„æœåŠ¡æ—¶é—´ï¼š ";
         cin >> pcBblockList[i].serveTime;
-        cout << "==>ÇëÊäÈë½ø³Ì [" << i + 1 << "] µÄÓÅÏÈ¼¶£º ";
+        cout << "==>è¯·è¾“å…¥è¿›ç¨‹ [" << i + 1 << "] çš„ä¼˜å…ˆçº§ï¼š ";
         cin >> pcBblockList[i].priority;
         cout << endl;
     }
-    cout << "*********************************Êı¾İ³õÊ¼»¯½áÊø*********************************" << endl;
+    cout << "*********************************æ•°æ®åˆå§‹åŒ–ç»“æŸ*********************************" << endl;
 }
 
 /**
- * ¿ªÊ¼º¯Êı
+ * å¼€å§‹å‡½æ•°
  * @param choice
- * CodeBy£º ÕÔ³ÉÒ¶
  * @param pcBblockList
  */
 void begin(int choice, PCBblock pcBblockList[]) {
     switch (choice) {
         case 1:
-            FCFS(pcBblockList); /*ÏÈÀ´ÏÈ·şÎñ*/
+            FCFS(pcBblockList); /*å…ˆæ¥å…ˆæœåŠ¡*/
             break;
         case 2:
-            SJF(pcBblockList);/*¶Ì×÷ÒµÓÅÏÈ*/
+            SJF(pcBblockList);/*çŸ­ä½œä¸šä¼˜å…ˆ*/
             break;
         case 3:
-            NPS(pcBblockList);/*ÓÅÏÈ¼¶µ÷¶È·ÇÇÀÕ¼*/
+            NPS(pcBblockList);/*ä¼˜å…ˆçº§è°ƒåº¦éæŠ¢å */
             break;
         case 4:
-            PS(pcBblockList);/*ÓÅÏÈ¼¶µ÷¶ÈÇÀÕ¼Ê½*/
+            PS(pcBblockList);/*ä¼˜å…ˆçº§è°ƒåº¦æŠ¢å å¼*/
             break;
         default:
-            cout << "ÊäÈëÓĞÎó£¬ÇëÖØĞÂÊäÈë£¡";
+            cout << "è¾“å…¥æœ‰è¯¯ï¼Œè¯·é‡æ–°è¾“å…¥ï¼";
             break;
     }
 }
 
 
 /**
- * ´òÓ¡ĞÅÏ¢
- * CodeBy£º Íõ³¤±ò
+ * æ‰“å°ä¿¡æ¯
  * @param pcBblockList
  */
 void PrintInformation(PCBblock pcBblockList[]) {
-    cout << "==>±»½ø³ÌÊäÈëµÄ½ø³ÌÊıÁ¿: [ " << processCounts << " ] " << endl;
-    cout << "==>½ø³Ìµ½À´µÄÊ±¼äÕ¹Ê¾: ";
+    cout << "==>è¢«è¿›ç¨‹è¾“å…¥çš„è¿›ç¨‹æ•°é‡: [ " << processCounts << " ] " << endl;
+    cout << "==>è¿›ç¨‹åˆ°æ¥çš„æ—¶é—´å±•ç¤º: ";
     for (int i = 0; i < processCounts; i++) {
         cout << pcBblockList[i].comingTimes << " ";
     }
     cout << endl;
-    cout << "==>½ø³Ì·şÎñµÄÊ±¼äÕ¹Ê¾: ";
+    cout << "==>è¿›ç¨‹æœåŠ¡çš„æ—¶é—´å±•ç¤º: ";
     for (int i = 0; i < processCounts; i++) {
         cout << pcBblockList[i].serveTime << " ";
     }
     cout << endl;
-    cout << "==>½ø³ÌÓÅÏÈ¼¶µÄÕ¹Ê¾:   ";
+    cout << "==>è¿›ç¨‹ä¼˜å…ˆçº§çš„å±•ç¤º:   ";
     for (int i = 0; i < processCounts; i++) {
         cout << pcBblockList[i].priority << " ";
     }
@@ -154,19 +150,17 @@ void PrintInformation(PCBblock pcBblockList[]) {
 }
 
 /**
- * Ñ¡ÔñËã·¨ÀàĞÍ
- * CodeBy£º ÕÔ³ÉÒ¶
+ * é€‰æ‹©ç®—æ³•ç±»å‹
  */
 void ChooseMethod() {
-    cout << "ÇëÑ¡ÔñÒ»ÖÖµ÷¶È·½Ê½[ 1-(ÏÈÀ´ÏÈ·şÎñFCFS),  2-(¶Ì½ø³ÌÓÅÏÈSJF),  3-ÓÅÏÈ¼¶(·ÇÇÀÕ¼),  4-ÓÅÏÈ¼¶(ÇÀÕ¼Ê½)  9999-ÍË³ö³ÌĞò]: ";
+    cout << "è¯·é€‰æ‹©ä¸€ç§è°ƒåº¦æ–¹å¼[ 1-(å…ˆæ¥å…ˆæœåŠ¡FCFS),  2-(çŸ­è¿›ç¨‹ä¼˜å…ˆSJF),  3-ä¼˜å…ˆçº§(éæŠ¢å ),  4-ä¼˜å…ˆçº§(æŠ¢å å¼)  9999-é€€å‡ºç¨‹åº]: ";
     cin >> methodChoosen;
     cout << endl;
 }
 
 
 /**
- * ÏÈÀ´ÏÈ·şÎñÅÅĞò¹æÔò °´ÕÕµ½À´Ê±¼ä ÉıĞòÅÅĞò¹æÔò
- * CodeBy£º ÕÔ³ÉÒ¶
+ * å…ˆæ¥å…ˆæœåŠ¡æ’åºè§„åˆ™ æŒ‰ç…§åˆ°æ¥æ—¶é—´ å‡åºæ’åºè§„åˆ™
  * @param a
  * @param b
  * @return true/false
@@ -176,8 +170,7 @@ bool LessSort_comingTime(PCBblock a, PCBblock b) {
 }
 
 /**
- * °´ÕÕ½ø³Ì±êÊ¶ºÅ ÉıĞòÅÅĞò¹æÔò
- * CodeBy£º Íõ³¤±ò
+ * æŒ‰ç…§è¿›ç¨‹æ ‡è¯†å· å‡åºæ’åºè§„åˆ™
  * @param a
  * @param b
  * @return  true/false
@@ -187,8 +180,7 @@ bool LessSort_Num(PCBblock a, PCBblock b) {
 }
 
 /**
- * °´ÕÕ¿ªÊ¼Ê±¼ä ÉıĞòÅÅĞò¹æÔò
- * CodeBy£º ËÎ±£ÏÍ
+ * æŒ‰ç…§å¼€å§‹æ—¶é—´ å‡åºæ’åºè§„åˆ™
  * @param a
  * @param b
  * @return true/false
@@ -198,69 +190,67 @@ bool LessSort_StartTime(PCBblock a, PCBblock b) {
 }
 
 /**
- * ÏÈÀ´ÏÈ·şÎñËã·¨
- * CodeBy£º ÕÔ³ÉÒ¶
+ * å…ˆæ¥å…ˆæœåŠ¡ç®—æ³•
  * @param pcBblockList
  */
 void FCFS(PCBblock pcBblockList[]) {
-    /*  ¶¨ÒåÒ»¸ö½ø³Ì½á¹¹ÌåÊı×é×÷Îª¸±±¾     */
+    /*  å®šä¹‰ä¸€ä¸ªè¿›ç¨‹ç»“æ„ä½“æ•°ç»„ä½œä¸ºå‰¯æœ¬     */
     PCBblock pcBblockList_copy[processCounts];
-    /*  µ÷ÓÃ¸´ÖÆº¯Êı  */
+    /*  è°ƒç”¨å¤åˆ¶å‡½æ•°  */
     PcbCopy(pcBblockList, pcBblockList_copy);
-    /*  ÉèÖÃµ±Ç°Ê±¼ä  */
+    /*  è®¾ç½®å½“å‰æ—¶é—´  */
     int current = 0;
-    /*  µ÷ÓÃÅÅĞòº¯Êı  */
+    /*  è°ƒç”¨æ’åºå‡½æ•°  */
     sort(pcBblockList_copy, pcBblockList_copy + processCounts, LessSort_comingTime);
-    /* ±éÀú²éÕÒ×îÔçµ½´ïµÄ½ø³Ì*/
+    /* éå†æŸ¥æ‰¾æœ€æ—©åˆ°è¾¾çš„è¿›ç¨‹*/
     for (int i = 0; i < processCounts; i++) {
-        /*  Èç¹ûµ±Ç°½ø³Ìµ½À´Ê±¼ä±Èµ±Ç°Ê±¼ä´ó£¬ÉèÖÃ×îÔçÀ´µÃÎªµ±Ç°Ê±¼ä  */
+        /*  å¦‚æœå½“å‰è¿›ç¨‹åˆ°æ¥æ—¶é—´æ¯”å½“å‰æ—¶é—´å¤§ï¼Œè®¾ç½®æœ€æ—©æ¥å¾—ä¸ºå½“å‰æ—¶é—´  */
         if (pcBblockList_copy[i].comingTimes > current) {
             current = pcBblockList_copy[i].comingTimes;
         }
-        /*  ¿ªÊ¼Ê±¼ä = µ±Ç°Ê±¼ä  */
+        /*  å¼€å§‹æ—¶é—´ = å½“å‰æ—¶é—´  */
         pcBblockList_copy[i].startedTimes = current;
-        /*  Íê³ÉÊ±¼ä = ¿ªÊ¼Ê±¼ä + ·şÎñÊ±¼ä   */
+        /*  å®Œæˆæ—¶é—´ = å¼€å§‹æ—¶é—´ + æœåŠ¡æ—¶é—´   */
         pcBblockList_copy[i].finishedTimes = pcBblockList_copy[i].startedTimes + pcBblockList_copy[i].serveTime;
-        /*  µÈ´ıÊ±¼ä = ¿ªÊ¼Ê±¼ä - µ½À´Ê±¼ä     */
+        /*  ç­‰å¾…æ—¶é—´ = å¼€å§‹æ—¶é—´ - åˆ°æ¥æ—¶é—´     */
         pcBblockList_copy[i].waitingTimes = pcBblockList_copy[i].startedTimes - pcBblockList_copy[i].comingTimes;
-        /*  µ±Ç°Ê±¼ä = Íê³ÉÊ±¼ä     */
+        /*  å½“å‰æ—¶é—´ = å®Œæˆæ—¶é—´     */
         current = pcBblockList_copy[i].finishedTimes;
-        /*  ÖÜ×ªÊ±¼ä = ·şÎñÊ±¼ä + µÈ´ıÊ±¼ä      */
+        /*  å‘¨è½¬æ—¶é—´ = æœåŠ¡æ—¶é—´ + ç­‰å¾…æ—¶é—´      */
         pcBblockList_copy[i].turnoverTimes = pcBblockList_copy[i].serveTime + pcBblockList_copy[i].waitingTimes;
-        /*  ´øÈ¨ÖÜ×ªÊ±¼ä = ÖÜ×ªÊ±¼ä / ·şÎñÊ±¼ä     */
+        /*  å¸¦æƒå‘¨è½¬æ—¶é—´ = å‘¨è½¬æ—¶é—´ / æœåŠ¡æ—¶é—´     */
         pcBblockList_copy[i].turnoverTimesWeight =
                 (float) pcBblockList_copy[i].turnoverTimes / (float) pcBblockList_copy[i].serveTime;
     }
-    /*  ´òÓ¡½ø³ÌÏà¹ØĞÅÏ¢    */
+    /*  æ‰“å°è¿›ç¨‹ç›¸å…³ä¿¡æ¯    */
     sort(pcBblockList_copy, pcBblockList_copy + processCounts, LessSort_StartTime);
     PrintSchedule(pcBblockList_copy);
 }
 
 /**
- * ¶Ì½ø³ÌÓÅÏÈ°ì·¨
- * CodeBy£º Íõ³¤±ò
+ * çŸ­è¿›ç¨‹ä¼˜å…ˆåŠæ³•
  * @param pcBblockList
  */
 void SJF(PCBblock pcBblockList[]) {
-    /*  ¶¨ÒåÒ»¸ö½ø³Ì½á¹¹ÌåÊı×é×÷Îª¸±±¾     */
+    /*  å®šä¹‰ä¸€ä¸ªè¿›ç¨‹ç»“æ„ä½“æ•°ç»„ä½œä¸ºå‰¯æœ¬     */
     PCBblock pcBblockList_copy[processCounts];
-    /*  µ÷ÓÃ¸´ÖÆº¯Êı  */
+    /*  è°ƒç”¨å¤åˆ¶å‡½æ•°  */
     PcbCopy(pcBblockList, pcBblockList_copy);
-    /*  µ÷ÓÃÅÅĞòº¯Êı  */
+    /*  è°ƒç”¨æ’åºå‡½æ•°  */
     sort(pcBblockList_copy, pcBblockList_copy + processCounts, LessSort_comingTime);
-    /*  ÉèÖÃ×îÔçÀ´µÄ½ø³ÌµÄµ½À´Ê±¼äÎªµ±Ç°Ê±¼ä  */
+    /*  è®¾ç½®æœ€æ—©æ¥çš„è¿›ç¨‹çš„åˆ°æ¥æ—¶é—´ä¸ºå½“å‰æ—¶é—´  */
     int current = pcBblockList_copy[0].comingTimes;
-    /* ±éÀú²éÕÒ×îÔçµ½´ïµÄ½ø³Ì  */
+    /* éå†æŸ¥æ‰¾æœ€æ—©åˆ°è¾¾çš„è¿›ç¨‹  */
     for (int j = 0; j < processCounts; j++) {
-        /*  ¶¨ÒåË÷Òıindex ¼ÇÂ¼×î¶Ì·şÎñÊ±¼ä½ø³ÌµÄË÷Òı  ¶¨Òå±È½Ï½ø³Ì·şÎñÊ±¼äµÄ²ÎÊı SerNum */
+        /*  å®šä¹‰ç´¢å¼•index è®°å½•æœ€çŸ­æœåŠ¡æ—¶é—´è¿›ç¨‹çš„ç´¢å¼•  å®šä¹‰æ¯”è¾ƒè¿›ç¨‹æœåŠ¡æ—¶é—´çš„å‚æ•° SerNum */
         int index = 0, serNum = 9999;
-        /*  ÕÒµ½×î¶Ì·şÎñÊ±¼ä½ø³ÌµÄË÷Òıindex  */
+        /*  æ‰¾åˆ°æœ€çŸ­æœåŠ¡æ—¶é—´è¿›ç¨‹çš„ç´¢å¼•index  */
         for (int i = 1; i < processCounts; ++i) {
-            /*  Ê×´Îµ½À´µÄ½ø³ÌÖ±½Óµ÷¶È     */
+            /*  é¦–æ¬¡åˆ°æ¥çš„è¿›ç¨‹ç›´æ¥è°ƒåº¦     */
             if (j == 0) {
                 break;
             }
-            /*  Èç¹ûµ±Ç°½ø³ÌÃ»ÓĞ±»µ÷¶È ÇÒ ÒÑ¾­µ½À´ */
+            /*  å¦‚æœå½“å‰è¿›ç¨‹æ²¡æœ‰è¢«è°ƒåº¦ ä¸” å·²ç»åˆ°æ¥ */
             if (pcBblockList_copy[i].flag && pcBblockList_copy[i].comingTimes <= current) {
                 if (pcBblockList_copy[i].serveTime < serNum) {
                     serNum = pcBblockList_copy[i].serveTime;
@@ -268,34 +258,33 @@ void SJF(PCBblock pcBblockList[]) {
                 }
             }
         }
-        /*  ÉèÖÃµ±Ç°½ø³ÌÒÑ¾­µ÷¶ÈÉèÖÃflag=flase  */
+        /*  è®¾ç½®å½“å‰è¿›ç¨‹å·²ç»è°ƒåº¦è®¾ç½®flag=flase  */
         pcBblockList_copy[index].flag = false;
-        /*  ¿ªÊ¼Ê±¼ä = µ±Ç°Ê±¼ä  */
+        /*  å¼€å§‹æ—¶é—´ = å½“å‰æ—¶é—´  */
         pcBblockList_copy[index].startedTimes = current;
-        /*  Íê³ÉÊ±¼ä = ¿ªÊ¼Ê±¼ä + ·şÎñÊ±¼ä   */
+        /*  å®Œæˆæ—¶é—´ = å¼€å§‹æ—¶é—´ + æœåŠ¡æ—¶é—´   */
         pcBblockList_copy[index].finishedTimes =
                 pcBblockList_copy[index].startedTimes + pcBblockList_copy[index].serveTime;
-        /*  µÈ´ıÊ±¼ä = ¿ªÊ¼Ê±¼ä - µ½À´Ê±¼ä     */
+        /*  ç­‰å¾…æ—¶é—´ = å¼€å§‹æ—¶é—´ - åˆ°æ¥æ—¶é—´     */
         pcBblockList_copy[index].waitingTimes =
                 pcBblockList_copy[index].startedTimes - pcBblockList_copy[index].comingTimes;
-        /*  µ±Ç°Ê±¼ä = Íê³ÉÊ±¼ä     */
+        /*  å½“å‰æ—¶é—´ = å®Œæˆæ—¶é—´     */
         current = pcBblockList_copy[index].finishedTimes;
-        /*  ÖÜ×ªÊ±¼ä = ·şÎñÊ±¼ä + µÈ´ıÊ±¼ä      */
+        /*  å‘¨è½¬æ—¶é—´ = æœåŠ¡æ—¶é—´ + ç­‰å¾…æ—¶é—´      */
         pcBblockList_copy[index].turnoverTimes =
                 pcBblockList_copy[index].serveTime + pcBblockList_copy[index].waitingTimes;
-        /*  ´øÈ¨ÖÜ×ªÊ±¼ä = ÖÜ×ªÊ±¼ä / ·şÎñÊ±¼ä     */
+        /*  å¸¦æƒå‘¨è½¬æ—¶é—´ = å‘¨è½¬æ—¶é—´ / æœåŠ¡æ—¶é—´     */
         pcBblockList_copy[index].turnoverTimesWeight =
                 (float) pcBblockList_copy[index].turnoverTimes / (float) pcBblockList_copy[index].serveTime;
     }
-    /*  ´òÓ¡½ø³ÌÏà¹ØĞÅÏ¢    */
+    /*  æ‰“å°è¿›ç¨‹ç›¸å…³ä¿¡æ¯    */
     sort(pcBblockList_copy, pcBblockList_copy + processCounts, LessSort_StartTime);
     PrintSchedule(pcBblockList_copy);
 
 }
 
 /**
- * PCB¸´ÖÆÒ»·İ½á¹¹ÌåÊı×é¸±±¾
- * CodeBy£º ËÎ±£ÏÍ
+ * PCBå¤åˆ¶ä¸€ä»½ç»“æ„ä½“æ•°ç»„å‰¯æœ¬
  * @param pcBblockList1
  * @param pcBblockList2
  */
@@ -309,26 +298,25 @@ void PcbCopy(PCBblock pcBblockList1[], PCBblock pcBblockList2[]) {
 }
 
 /**
- * ÓÅÏÈ¼¶µ÷¶ÈËã·¨(·ÇÇÀÕ¼Ê½)
- * CodeBy£º ËÎ±£ÏÍ
+ * ä¼˜å…ˆçº§è°ƒåº¦ç®—æ³•(éæŠ¢å å¼)
  * @param pcBblockList
  */
 void NPS(PCBblock pcBblockList[]) {
-    /*  1. ¶¨ÒåÒ»¸ö½ø³Ì½á¹¹ÌåÊı×é×÷Îª¸±±¾     */
+    /*  1. å®šä¹‰ä¸€ä¸ªè¿›ç¨‹ç»“æ„ä½“æ•°ç»„ä½œä¸ºå‰¯æœ¬     */
     PCBblock pcBblockList_copy[processCounts];
-    /*  2. µ÷ÓÃ¸´ÖÆº¯Êı  */
+    /*  2. è°ƒç”¨å¤åˆ¶å‡½æ•°  */
     PcbCopy(pcBblockList, pcBblockList_copy);
-    /*  3. µ÷ÓÃÅÅĞòº¯Êı  */
+    /*  3. è°ƒç”¨æ’åºå‡½æ•°  */
     sort(pcBblockList_copy, pcBblockList_copy + processCounts, LessSort_comingTime);
-    /*  4. ÉèÖÃ×îÔçÀ´µÄ½ø³ÌµÄµ½À´Ê±¼äÎªµ±Ç°Ê±¼ä  */
+    /*  4. è®¾ç½®æœ€æ—©æ¥çš„è¿›ç¨‹çš„åˆ°æ¥æ—¶é—´ä¸ºå½“å‰æ—¶é—´  */
     int current = pcBblockList_copy[0].comingTimes;
-    /*  5. ±éÀú²éÕÒ×îÔçµ½´ïµÄ½ø³Ì  */
+    /*  5. éå†æŸ¥æ‰¾æœ€æ—©åˆ°è¾¾çš„è¿›ç¨‹  */
     for (int j = 0; j < processCounts; j++) {
-        /*  ¶¨ÒåË÷Òıindex ¼ÇÂ¼×î¸ßÓÅÏÈ¼¶½ø³ÌµÄË÷Òı  ¶¨Òå±È½Ï½ø³ÌÓÅÏÈ¼¶µÄ²ÎÊı priNum */
+        /*  å®šä¹‰ç´¢å¼•index è®°å½•æœ€é«˜ä¼˜å…ˆçº§è¿›ç¨‹çš„ç´¢å¼•  å®šä¹‰æ¯”è¾ƒè¿›ç¨‹ä¼˜å…ˆçº§çš„å‚æ•° priNum */
         int index = 0, priNum = 0;
-        /*  ÕÒµ½×î¸ßÓÅÏÈ¼¶½ø³ÌµÄË÷Òıindex  */
+        /*  æ‰¾åˆ°æœ€é«˜ä¼˜å…ˆçº§è¿›ç¨‹çš„ç´¢å¼•index  */
         for (int i = 0; i < processCounts; ++i) {
-            /*  Èç¹ûµ±Ç°½ø³ÌÃ»ÓĞ±»µ÷¶È ÇÒ ÒÑ¾­µ½À´ */
+            /*  å¦‚æœå½“å‰è¿›ç¨‹æ²¡æœ‰è¢«è°ƒåº¦ ä¸” å·²ç»åˆ°æ¥ */
             if (pcBblockList_copy[i].flag && pcBblockList_copy[i].comingTimes <= current) {
                 if (pcBblockList_copy[i].priority > priNum) {
                     priNum = pcBblockList_copy[i].priority;
@@ -336,22 +324,22 @@ void NPS(PCBblock pcBblockList[]) {
                 }
             }
         }
-        /*  ÉèÖÃµ±Ç°½ø³ÌÒÑ¾­µ÷¶ÈÉèÖÃflag=flase  */
+        /*  è®¾ç½®å½“å‰è¿›ç¨‹å·²ç»è°ƒåº¦è®¾ç½®flag=flase  */
         pcBblockList_copy[index].flag = false;
-        /*  ¿ªÊ¼Ê±¼ä = µ±Ç°Ê±¼ä  */
+        /*  å¼€å§‹æ—¶é—´ = å½“å‰æ—¶é—´  */
         pcBblockList_copy[index].startedTimes = current;
-        /*  Íê³ÉÊ±¼ä = ¿ªÊ¼Ê±¼ä + ·şÎñÊ±¼ä   */
+        /*  å®Œæˆæ—¶é—´ = å¼€å§‹æ—¶é—´ + æœåŠ¡æ—¶é—´   */
         pcBblockList_copy[index].finishedTimes =
                 pcBblockList_copy[index].startedTimes + pcBblockList_copy[index].serveTime;
-        /*  µÈ´ıÊ±¼ä = ¿ªÊ¼Ê±¼ä - µ½À´Ê±¼ä     */
+        /*  ç­‰å¾…æ—¶é—´ = å¼€å§‹æ—¶é—´ - åˆ°æ¥æ—¶é—´     */
         pcBblockList_copy[index].waitingTimes =
                 pcBblockList_copy[index].startedTimes - pcBblockList_copy[index].comingTimes;
-        /*  µ±Ç°Ê±¼ä = Íê³ÉÊ±¼ä     */
+        /*  å½“å‰æ—¶é—´ = å®Œæˆæ—¶é—´     */
         current = pcBblockList_copy[index].finishedTimes;
-        /*  ÖÜ×ªÊ±¼ä = ·şÎñÊ±¼ä + µÈ´ıÊ±¼ä      */
+        /*  å‘¨è½¬æ—¶é—´ = æœåŠ¡æ—¶é—´ + ç­‰å¾…æ—¶é—´      */
         pcBblockList_copy[index].turnoverTimes =
                 pcBblockList_copy[index].serveTime + pcBblockList_copy[index].waitingTimes;
-        /*  ´øÈ¨ÖÜ×ªÊ±¼ä = ÖÜ×ªÊ±¼ä / ·şÎñÊ±¼ä     */
+        /*  å¸¦æƒå‘¨è½¬æ—¶é—´ = å‘¨è½¬æ—¶é—´ / æœåŠ¡æ—¶é—´     */
         pcBblockList_copy[index].turnoverTimesWeight =
                 (float) pcBblockList_copy[index].turnoverTimes / (float) pcBblockList_copy[index].serveTime;
     }
@@ -361,20 +349,19 @@ void NPS(PCBblock pcBblockList[]) {
 
 
  /**
-  * ÓÅÏÈ¼¶µ÷¶ÈËã·¨(ÇÀÕ¼Ê½)
-  * CodeBy£º ËÎ±£ÏÍ
+  * ä¼˜å…ˆçº§è°ƒåº¦ç®—æ³•(æŠ¢å å¼)
   * @param pcBblockList
   */
 void PS(PCBblock pcBblockList[]) {
-     /*  ¶¨ÒåÒ»¸ö½ø³Ì½á¹¹ÌåÊı×é×÷Îª¸±±¾     */
+     /*  å®šä¹‰ä¸€ä¸ªè¿›ç¨‹ç»“æ„ä½“æ•°ç»„ä½œä¸ºå‰¯æœ¬     */
      PCBblock pcBblockList_copy[processCounts], pcBblockList1[processCounts];
-     /*  µ÷ÓÃ¸´ÖÆº¯Êı  */
+     /*  è°ƒç”¨å¤åˆ¶å‡½æ•°  */
      PcbCopy(pcBblockList, pcBblockList_copy);
      PcbCopy(pcBblockList, pcBblockList1);
-     /*  µ÷ÓÃÅÅĞòº¯Êı  */
+     /*  è°ƒç”¨æ’åºå‡½æ•°  */
      sort(pcBblockList_copy, pcBblockList_copy + processCounts, LessSort_comingTime);
      sort(pcBblockList1, pcBblockList1 + processCounts, LessSort_comingTime);
-     /*  ¶¨Òå×ÜÊ±¼ä µÃ³öÑ­»·´ÎÊı */
+     /*  å®šä¹‰æ€»æ—¶é—´ å¾—å‡ºå¾ªç¯æ¬¡æ•° */
 
      int sumTime = 0;
      int serveTime=0;
@@ -384,22 +371,22 @@ void PS(PCBblock pcBblockList[]) {
 
      sumTime = serveTime+pcBblockList_copy[processCounts-1].comingTimes;
 
-     /*  ÉèÖÃ×îÔçÀ´µÄ½ø³ÌµÄµ½À´Ê±¼äÎªµ±Ç°Ê±¼ä  */
+     /*  è®¾ç½®æœ€æ—©æ¥çš„è¿›ç¨‹çš„åˆ°æ¥æ—¶é—´ä¸ºå½“å‰æ—¶é—´  */
      int current = pcBblockList1[0].comingTimes;
-     /*  index´ú±íµ±Ç°µ÷¶È½ø³ÌµÄË÷Òı  local´ú±íÉÏÒ»¸öµ÷¶È½ø³ÌµÄË÷Òı*/
+     /*  indexä»£è¡¨å½“å‰è°ƒåº¦è¿›ç¨‹çš„ç´¢å¼•  localä»£è¡¨ä¸Šä¸€ä¸ªè°ƒåº¦è¿›ç¨‹çš„ç´¢å¼•*/
      int index = 0, local = 0;
-     /* ±éÀúÊ±¼äÑ­»·  */
+     /* éå†æ—¶é—´å¾ªç¯  */
      for (; current <=sumTime; ++current) {
          int priNum = 0;
          for (int i = 0; i < processCounts; ++i) {
-             /*  Èç¹ûµ±Ç°½ø³ÌÃ»ÓĞ±»µ÷¶È ÇÒ ÒÑ¾­µ½À´ */
+             /*  å¦‚æœå½“å‰è¿›ç¨‹æ²¡æœ‰è¢«è°ƒåº¦ ä¸” å·²ç»åˆ°æ¥ */
              if (pcBblockList1[i].flag && pcBblockList1[i].comingTimes <= current) {
-                 /*  ÅĞ¶Ïµ±Ç°µ½À´½ø³ÌµÄÓÅÏÈ¼¶ÊÇ·ñ±Èµ±Ç°ÔËĞĞµÄ½ø³ÌµÄÓÅÏÈ¼¶´ó */
+                 /*  åˆ¤æ–­å½“å‰åˆ°æ¥è¿›ç¨‹çš„ä¼˜å…ˆçº§æ˜¯å¦æ¯”å½“å‰è¿è¡Œçš„è¿›ç¨‹çš„ä¼˜å…ˆçº§å¤§ */
                  if (pcBblockList1[i].priority > priNum) {
                      priNum = pcBblockList1[i].priority;
-                     /* ·¢Éú½ø³Ìµ÷¶È index¼ÇÂ¼µ±Ç°Òªµ÷¶ÈµÄ½ø³Ì */
+                     /* å‘ç”Ÿè¿›ç¨‹è°ƒåº¦ indexè®°å½•å½“å‰è¦è°ƒåº¦çš„è¿›ç¨‹ */
                      index = i;
-                     /*  ÅĞ¶Ïµ±Ç°Òªµ÷¶È½ø³ÌÊÇ·ñÊÇµÚÒ»´Îµ÷¶È  */
+                     /*  åˆ¤æ–­å½“å‰è¦è°ƒåº¦è¿›ç¨‹æ˜¯å¦æ˜¯ç¬¬ä¸€æ¬¡è°ƒåº¦  */
                      if (!pcBblockList_copy[index].startFlag) {
                          pcBblockList_copy[index].startedTimes = current;
                          pcBblockList_copy[index].finishedTimes = current;
@@ -410,37 +397,37 @@ void PS(PCBblock pcBblockList[]) {
                  }
              }
          }
-         /*  ÅĞ¶Ïµ±Ç°Ê±¼äÔËĞĞ½ø³ÌÊÇ·ñµÈÓÚÖ®Ç°ÔËĞĞµÄ½ø³Ì   */
+         /*  åˆ¤æ–­å½“å‰æ—¶é—´è¿è¡Œè¿›ç¨‹æ˜¯å¦ç­‰äºä¹‹å‰è¿è¡Œçš„è¿›ç¨‹   */
          if (local != index) {
              if (local != processCounts - 1) {
-                 cout << "½ø³Ì[" << pcBblockList_copy[local].num << "]->";
+                 cout << "è¿›ç¨‹[" << pcBblockList_copy[local].num << "]->";
              }
-             /*  °Ñµ±Ç°µÄ½ø³ÌµÄË÷Òı¸ølocal  local¼ÇÂ¼ÉÏÒ»¸öµ÷¶ÈµÄ½ø³ÌË÷Òı  */
-             local = index;//´ú±í´òÓ¡¹ı
+             /*  æŠŠå½“å‰çš„è¿›ç¨‹çš„ç´¢å¼•ç»™local  localè®°å½•ä¸Šä¸€ä¸ªè°ƒåº¦çš„è¿›ç¨‹ç´¢å¼•  */
+             local = index;//ä»£è¡¨æ‰“å°è¿‡
          }
-         /*  ÉèÖÃ½áÊøÊ±¼ä  */
+         /*  è®¾ç½®ç»“æŸæ—¶é—´  */
          if(pcBblockList1[index].flag){
 
              pcBblockList_copy[index].finishedTimes = current + 1;
 
              pcBblockList1[index].finishedTimes = current + 1;
              pcBblockList1[index].serveTime -= 1;
-             /*  ÅĞ¶Ïµ±Ç°½ø³ÌÊÇ·ñ±»·şÎñÍê³É */
+             /*  åˆ¤æ–­å½“å‰è¿›ç¨‹æ˜¯å¦è¢«æœåŠ¡å®Œæˆ */
              if (pcBblockList1[index].serveTime == 0) {
                  pcBblockList1[index].flag = false;
              }
          }
 
      }
-     cout << "½ø³Ì[" << pcBblockList_copy[index].num << "]" << endl;
+     cout << "è¿›ç¨‹[" << pcBblockList_copy[index].num << "]" << endl;
      for (int index = 0; index < processCounts; ++index) {
-         /*  µÈ´ıÊ±¼ä = ½áÊøÊ±¼ä - µ½À´Ê±¼ä - ·şÎñÊ±¼ä   */
+         /*  ç­‰å¾…æ—¶é—´ = ç»“æŸæ—¶é—´ - åˆ°æ¥æ—¶é—´ - æœåŠ¡æ—¶é—´   */
          pcBblockList_copy[index].waitingTimes =
                  pcBblockList_copy[index].finishedTimes - pcBblockList_copy[index].comingTimes - pcBblockList_copy[index].serveTime;
-         /*  ÖÜ×ªÊ±¼ä = ·şÎñÊ±¼ä + µÈ´ıÊ±¼ä */
+         /*  å‘¨è½¬æ—¶é—´ = æœåŠ¡æ—¶é—´ + ç­‰å¾…æ—¶é—´ */
          pcBblockList_copy[index].turnoverTimes =
                  pcBblockList_copy[index].serveTime + pcBblockList_copy[index].waitingTimes;
-         /*  ´øÈ¨ÖÜ×ªÊ±¼ä = ÖÜ×ªÊ±¼ä / ·şÎñÊ±¼ä */
+         /*  å¸¦æƒå‘¨è½¬æ—¶é—´ = å‘¨è½¬æ—¶é—´ / æœåŠ¡æ—¶é—´ */
          pcBblockList_copy[index].turnoverTimesWeight =
                  (float) pcBblockList_copy[index].turnoverTimes / (float) pcBblockList_copy[index].serveTime;
 
@@ -450,22 +437,21 @@ void PS(PCBblock pcBblockList[]) {
 }
 
 /**
- * ´òÓ¡µ÷¶ÈĞÅÏ¢(º¬ÓĞ¿ÉÓÃ±êÊ¶)
- * CodeBy£º ÕÔ³ÉÒ¶
+ * æ‰“å°è°ƒåº¦ä¿¡æ¯(å«æœ‰å¯ç”¨æ ‡è¯†)
  * @param pcBblockList
  */
 void PrintSchedule_Flag(PCBblock pcBblockList[]) {
-    cout << "*********************************½ø³Ìµ÷¶ÈĞÅÏ¢´òÓ¡¿ªÊ¼*********************************" << endl;
-    cout << "½ø³Ì(ID)    µ½´ïÊ±¼ä    ·şÎñÊ±¼ä        ÓÅÏÈ¼¶    µÈ´ıÊ±¼ä    ¿ªÊ¼Ê±¼ä    Íê³ÉÊ±¼ä    ÖÜ×ªÊ±¼ä    ¼ÓÈ¨ÖÜ×ªÊ±¼ä    flag" << endl;
+    cout << "*********************************è¿›ç¨‹è°ƒåº¦ä¿¡æ¯æ‰“å°å¼€å§‹*********************************" << endl;
+    cout << "è¿›ç¨‹(ID)    åˆ°è¾¾æ—¶é—´    æœåŠ¡æ—¶é—´        ä¼˜å…ˆçº§    ç­‰å¾…æ—¶é—´    å¼€å§‹æ—¶é—´    å®Œæˆæ—¶é—´    å‘¨è½¬æ—¶é—´    åŠ æƒå‘¨è½¬æ—¶é—´    flag" << endl;
     for (int i = 0; i < processCounts; i++) {
         printf("%5d    %6d    %7d    %7d    %7d    %7d    %7d    %7d    %10f      %d\n", pcBblockList[i].num,
                pcBblockList[i].comingTimes, pcBblockList[i].serveTime, pcBblockList[i].priority,
                pcBblockList[i].waitingTimes, pcBblockList[i].startedTimes, pcBblockList[i].finishedTimes,
                pcBblockList[i].turnoverTimes, pcBblockList[i].turnoverTimesWeight, pcBblockList[i].flag);
     }
-    /*Æ½¾ùÖÜ×ªÊ±¼äºÍ×ÜÖÜ×ªÊ±¼ä*/
+    /*å¹³å‡å‘¨è½¬æ—¶é—´å’Œæ€»å‘¨è½¬æ—¶é—´*/
     float average_turnover_time, sum_turnover_time = 0.0;
-    /*Æ½¾ù´øÈ¨ÖÜ×ªÊ±¼äºÍ×Ü´øÈ¨ÖÜ×ªÊ±¼ä*/
+    /*å¹³å‡å¸¦æƒå‘¨è½¬æ—¶é—´å’Œæ€»å¸¦æƒå‘¨è½¬æ—¶é—´*/
     float average_turnover_time_weight, sum_turnover_time_weight = 0;
     for (int i = 0; i < processCounts; i++) {
         sum_turnover_time += pcBblockList[i].turnoverTimes;
@@ -473,29 +459,28 @@ void PrintSchedule_Flag(PCBblock pcBblockList[]) {
     }
     average_turnover_time = sum_turnover_time / processCounts;
     average_turnover_time_weight = sum_turnover_time_weight / processCounts;
-    cout << "==>Æ½¾ùÖÜ×ªÊ±¼äÎª£º[" << average_turnover_time << "] " << endl;
-    cout << "==>´øÈ¨Æ½¾ùÖÜ×ªÊ±¼äÎª£º[" << average_turnover_time_weight << "] " << endl;
-    cout << "*********************************½ø³Ìµ÷¶ÈĞÅÏ¢´òÓ¡½áÊø*********************************" << endl;
+    cout << "==>å¹³å‡å‘¨è½¬æ—¶é—´ä¸ºï¼š[" << average_turnover_time << "] " << endl;
+    cout << "==>å¸¦æƒå¹³å‡å‘¨è½¬æ—¶é—´ä¸ºï¼š[" << average_turnover_time_weight << "] " << endl;
+    cout << "*********************************è¿›ç¨‹è°ƒåº¦ä¿¡æ¯æ‰“å°ç»“æŸ*********************************" << endl;
 }
 
 
 /**
- * ´òÓ¡µ÷¶ÈĞÅÏ¢(º¬ÓĞÓÅÏÈ¼¶)
- * CodeBy£º Íõ³¤±ò
+ * æ‰“å°è°ƒåº¦ä¿¡æ¯(å«æœ‰ä¼˜å…ˆçº§)
  * @param pcBblockList
  */
 void PrintSchedule_Pri(PCBblock pcBblockList[]) {
-    cout << "*********************************½ø³Ìµ÷¶ÈĞÅÏ¢´òÓ¡¿ªÊ¼*********************************" << endl;
-    cout << "½ø³Ì(ID)    µ½´ïÊ±¼ä    ·şÎñÊ±¼ä     ÓÅÏÈ¼¶     µÈ´ıÊ±¼ä     ¿ªÊ¼Ê±¼ä    Íê³ÉÊ±¼ä    ÖÜ×ªÊ±¼ä    ¼ÓÈ¨ÖÜ×ªÊ±¼ä" << endl;
+    cout << "*********************************è¿›ç¨‹è°ƒåº¦ä¿¡æ¯æ‰“å°å¼€å§‹*********************************" << endl;
+    cout << "è¿›ç¨‹(ID)    åˆ°è¾¾æ—¶é—´    æœåŠ¡æ—¶é—´     ä¼˜å…ˆçº§     ç­‰å¾…æ—¶é—´     å¼€å§‹æ—¶é—´    å®Œæˆæ—¶é—´    å‘¨è½¬æ—¶é—´    åŠ æƒå‘¨è½¬æ—¶é—´" << endl;
     for (int i = 0; i < processCounts; i++) {
         printf("%5d    %6d    %7d    %7d    %7d    %7d    %7d    %7d    %10f\n", pcBblockList[i].num,
                pcBblockList[i].comingTimes, pcBblockList[i].serveTime, pcBblockList[i].priority,
                pcBblockList[i].waitingTimes, pcBblockList[i].startedTimes, pcBblockList[i].finishedTimes,
                pcBblockList[i].turnoverTimes, pcBblockList[i].turnoverTimesWeight);
     }
-    /*Æ½¾ùÖÜ×ªÊ±¼äºÍ×ÜÖÜ×ªÊ±¼ä*/
+    /*å¹³å‡å‘¨è½¬æ—¶é—´å’Œæ€»å‘¨è½¬æ—¶é—´*/
     float average_turnover_time, sum_turnover_time = 0.0;
-    /*Æ½¾ù´øÈ¨ÖÜ×ªÊ±¼äºÍ×Ü´øÈ¨ÖÜ×ªÊ±¼ä*/
+    /*å¹³å‡å¸¦æƒå‘¨è½¬æ—¶é—´å’Œæ€»å¸¦æƒå‘¨è½¬æ—¶é—´*/
     float average_turnover_time_weight, sum_turnover_time_weight = 0;
     for (int i = 0; i < processCounts; i++) {
         sum_turnover_time += pcBblockList[i].turnoverTimes;
@@ -503,36 +488,35 @@ void PrintSchedule_Pri(PCBblock pcBblockList[]) {
     }
     average_turnover_time = sum_turnover_time / processCounts;
     average_turnover_time_weight = sum_turnover_time_weight / processCounts;
-    cout << "==>Æ½¾ùÖÜ×ªÊ±¼äÎª£º[" << average_turnover_time << "] " << endl;
-    cout << "==>´øÈ¨Æ½¾ùÖÜ×ªÊ±¼äÎª£º[" << average_turnover_time_weight << "] " << endl;
-    cout << "==>µ÷¶È¹ı³Ì: ";
+    cout << "==>å¹³å‡å‘¨è½¬æ—¶é—´ä¸ºï¼š[" << average_turnover_time << "] " << endl;
+    cout << "==>å¸¦æƒå¹³å‡å‘¨è½¬æ—¶é—´ä¸ºï¼š[" << average_turnover_time_weight << "] " << endl;
+    cout << "==>è°ƒåº¦è¿‡ç¨‹: ";
     for (int i = 0; i < processCounts; ++i) {
         if (i != processCounts - 1) {
-            cout << "½ø³Ì[" << pcBblockList[i].num << "]->";
+            cout << "è¿›ç¨‹[" << pcBblockList[i].num << "]->";
         } else {
-            cout << "½ø³Ì[" << pcBblockList[i].num << "]" << endl;
+            cout << "è¿›ç¨‹[" << pcBblockList[i].num << "]" << endl;
         }
     }
-    cout << "*********************************½ø³Ìµ÷¶ÈĞÅÏ¢´òÓ¡½áÊø*********************************" << endl;
+    cout << "*********************************è¿›ç¨‹è°ƒåº¦ä¿¡æ¯æ‰“å°ç»“æŸ*********************************" << endl;
 }
 
 /**
- * ´òÓ¡µ÷¶ÈĞÅÏ¢(»ù±¾´òÓ¡)
- * CodeBy£º ËÎ±£ÏÍ
+ * æ‰“å°è°ƒåº¦ä¿¡æ¯(åŸºæœ¬æ‰“å°)
  * @param pcBblockList
  */
 void PrintSchedule(PCBblock pcBblockList[]) {
-    cout << "*********************************½ø³Ìµ÷¶ÈĞÅÏ¢´òÓ¡¿ªÊ¼*********************************" << endl;
-    cout << "½ø³Ì(ID)    µ½´ïÊ±¼ä    ·şÎñÊ±¼ä    µÈ´ıÊ±¼ä    ¿ªÊ¼Ê±¼ä    Íê³ÉÊ±¼ä    ÖÜ×ªÊ±¼ä    ¼ÓÈ¨ÖÜ×ªÊ±¼ä" << endl;
+    cout << "*********************************è¿›ç¨‹è°ƒåº¦ä¿¡æ¯æ‰“å°å¼€å§‹*********************************" << endl;
+    cout << "è¿›ç¨‹(ID)    åˆ°è¾¾æ—¶é—´    æœåŠ¡æ—¶é—´    ç­‰å¾…æ—¶é—´    å¼€å§‹æ—¶é—´    å®Œæˆæ—¶é—´    å‘¨è½¬æ—¶é—´    åŠ æƒå‘¨è½¬æ—¶é—´" << endl;
     for (int i = 0; i < processCounts; i++) {
         printf("%5d    %6d    %7d    %7d    %7d    %7d    %7d    %10f\n", pcBblockList[i].num,
                pcBblockList[i].comingTimes, pcBblockList[i].serveTime, pcBblockList[i].waitingTimes,
                pcBblockList[i].startedTimes, pcBblockList[i].finishedTimes, pcBblockList[i].turnoverTimes,
                pcBblockList[i].turnoverTimesWeight);
     }
-    /*Æ½¾ùÖÜ×ªÊ±¼äºÍ×ÜÖÜ×ªÊ±¼ä*/
+    /*å¹³å‡å‘¨è½¬æ—¶é—´å’Œæ€»å‘¨è½¬æ—¶é—´*/
     float average_turnover_time, sum_turnover_time = 0.0;
-    /*Æ½¾ù´øÈ¨ÖÜ×ªÊ±¼äºÍ×Ü´øÈ¨ÖÜ×ªÊ±¼ä*/
+    /*å¹³å‡å¸¦æƒå‘¨è½¬æ—¶é—´å’Œæ€»å¸¦æƒå‘¨è½¬æ—¶é—´*/
     float average_turnover_time_weight, sum_turnover_time_weight = 0;
     for (int i = 0; i < processCounts; i++) {
         sum_turnover_time += pcBblockList[i].turnoverTimes;
@@ -540,16 +524,16 @@ void PrintSchedule(PCBblock pcBblockList[]) {
     }
     average_turnover_time = sum_turnover_time / processCounts;
     average_turnover_time_weight = sum_turnover_time_weight / processCounts;
-    cout << "==>Æ½¾ùÖÜ×ªÊ±¼äÎª£º[" << average_turnover_time << "] " << endl;
-    cout << "==>´øÈ¨Æ½¾ùÖÜ×ªÊ±¼äÎª£º[" << average_turnover_time_weight << "] " << endl;
-    cout << "==>µ÷¶È¹ı³Ì: ";
+    cout << "==>å¹³å‡å‘¨è½¬æ—¶é—´ä¸ºï¼š[" << average_turnover_time << "] " << endl;
+    cout << "==>å¸¦æƒå¹³å‡å‘¨è½¬æ—¶é—´ä¸ºï¼š[" << average_turnover_time_weight << "] " << endl;
+    cout << "==>è°ƒåº¦è¿‡ç¨‹: ";
     for (int i = 0; i < processCounts; ++i) {
         if (i != processCounts - 1) {
-            cout << "½ø³Ì[" << pcBblockList[i].num << "]->";
+            cout << "è¿›ç¨‹[" << pcBblockList[i].num << "]->";
         } else {
-            cout << "½ø³Ì[" << pcBblockList[i].num << "]" << endl;
+            cout << "è¿›ç¨‹[" << pcBblockList[i].num << "]" << endl;
         }
     }
-    cout << "*********************************½ø³Ìµ÷¶ÈĞÅÏ¢´òÓ¡½áÊø*********************************" << endl;
+    cout << "*********************************è¿›ç¨‹è°ƒåº¦ä¿¡æ¯æ‰“å°ç»“æŸ*********************************" << endl;
 }
 
